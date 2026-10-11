@@ -34,4 +34,6 @@ Early private development used 1.0.1, whose archived source lacks a license file
 
 Download the source assets alongside the IMG, including the separate [OS corresponding-source bundle](corresponding-source.md). The Dino source/build recipe does not replace sources and notices for Linux, BusyBox, glibc, or other OS components.
 
+The [consolidated stock OS, application and font notices](third-party-notices.txt) are also included inside each IMG at `/opt/dino/licenses/OS-and-font-notices.txt`. They retain target package license texts, application/translation notices, and the full OFL/Apache font licenses. The OS bundle preserves Buildroot's original warnings together with supplemental license files resolving its missing license-file declarations.
+
 Retain archives, applied patches, configurations, build scripts, and applicable notices if redistributing an image. Review the collector's manifest and warnings rather than treating its output as a legal certification. Experimental hardware status and pending independent reproducibility do not change component licenses.
