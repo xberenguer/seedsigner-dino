@@ -1,40 +1,41 @@
 # Reproducibility and review
 
-The target is an independent build that produces the same bytes from the same published inputs. This preview distinguishes that target from what has actually been demonstrated.
+The target is an independent build producing identical bytes from published inputs. The experimental release distinguishes that target from its actual evidence.
 
 ## Current boundary
 
-The image assembly process verifies the exact official SeedSigner 0.8.7 Pi Zero base, then adds a deterministic overlay and the profile's boot settings. It preserves the underlying upstream image as a trusted binary input. The project does not claim to rebuild the complete upstream operating system, kernel, or firmware.
+The builder verifies the official SeedSigner 0.8.7 Pi Zero image, then adds an inspectable overlay, display settings, and entry configuration. The signed OS remains a trusted binary input. Its upstream signature authenticates the unmodified base, not the resulting Dino image.
 
-Historical development used a SeedConsole-extracted gpSP binary and Dino ROM. The public build recipe instead compiles the project's frontend and gpSP/open BIOS from pinned source using a pinned cross-toolchain. The historical game ROM remains an externally supplied, hash-checked local input; source coverage and redistribution are unresolved. A newly compiled gpSP core should not be described as byte-identical to the historical extracted core unless that comparison is established.
+The frontend, gpSP core, and open BIOS are compiled from pinned source using a hash-pinned Bootlin toolchain and Debian environment. Compiler/sysroot and Debian tools are trusted prebuilt inputs; this project does not bootstrap its compiler or eliminate compiler trust.
 
-The Bootlin cross-toolchain and Debian container/packages are trusted prebuilt build inputs. This project does not bootstrap its compiler from source or eliminate compiler trust.
+**Google-Dino-GBA 1.1 is the verified official upstream ROM**, not a claimed source reproduction. Its licensed source and notices accompany the release. Historical SeedConsole-extracted game/core binaries are not the public 0.1.1-beta inputs.
 
-No independent third party has yet reproduced and attested to a complete final image. A previous private development image was rebuilt byte-identically from the same prebuilt inputs. That is evidence of repeatable assembly, not a complete source-to-binary proof for this release.
+The separate [OS source collection](corresponding-source.md) supplies pinned build recipes, package source archives, patches, configuration, and notices. Collection is not a new OS build or proof that every upstream byte was reproduced locally.
 
-## Inputs that must remain explicit
+Repeated packaging from identical supplied inputs is deterministic. An independent third party has not yet attested to a complete final IMG match. ARM1176 QEMU checks establish specific software/ABI behavior, not physical screen, camera, or signing qualification. Exact results belong to the final release's manifests and logs.
 
-- The release source commit and version.
-- The official base image, size, SHA-256, and verified upstream signature where available.
-- The gpSP source commit and its required submodule content.
-- The compiler/toolchain archive and hash, container recipe, and package snapshot.
-- The locally supplied ROM's hash and provenance.
-- The profile, configuration template, build flags, and normalized timestamps.
-- The exact commands used and final source, overlay, and image hashes.
+## Inputs recorded for review
 
-Image assembly normalizes archive ownership, permissions, order, and timestamps. The pinned build environment reduces host-dependent differences. Pinning an input makes it identifiable; it does not itself establish that the input is trustworthy.
+- Project source commit and release version.
+- Official base size/hash, signature, and signing-key fingerprint.
+- Core/BIOS/library source pins, compiler archive, and build flags.
+- Official game ZIP, ROM hash, licensed source tag, and notices.
+- Container recipe, package snapshot/versions, and output hashes.
+- Screen profile, entry configuration template, and normalized metadata.
 
-## Independent verification procedure
+Pinning identifies an input; it does not establish safe behavior.
 
-1. Review the tagged source and all pinned input URLs/hashes.
-2. Fetch the inputs in a fresh environment and verify the official base's provenance.
-3. Build according to [building](building.md), retaining the container/build identity and logs.
-4. Repeat in a second clean environment; compare the complete image and overlay hashes.
-5. If a published binary release exists, compare against its signed checksums. Investigate any difference instead of ignoring metadata mismatches.
-6. Publish the source commit, environment, commands, input hashes, output hashes, and any discrepancies. Do not publish ROMs or other inputs without the required rights.
+## Independent verification
 
-The maintainers should obtain at least one independent matching rebuild before labeling a downloadable image reproducible. A release signature authenticates the release publisher; the upstream signature authenticates the unmodified base only.
+1. Review tagged source, manifests, archives, and input URLs/hashes.
+2. Fetch in a clean environment and verify the official base signature.
+3. Follow [building](building.md), retaining container identity and logs.
+4. Repeat in another clean environment and compare complete IMG/overlay hashes.
+5. Compare with release `SHA256SUMS`; investigate every difference.
+6. Publish the source commit, commands, input/output hashes, and discrepancies.
+
+An independent matching rebuild would support a stronger claim. Until then, downloads remain explicitly experimental. A release signature, if supplied, identifies its publisher and does not replace review.
 
 ## Security review is separate
 
-A matching rebuild shows that the reviewed inputs produce the distributed bytes. Code review assesses behavior. Review the small startup overlay first: entry configuration, subprocess invocation, input handling, display writes, game termination, and the transition into the signer. Then inspect the emulator/game inputs and trusted base. See [SECURITY.md](../SECURITY.md).
+A rebuild shows that reviewed inputs produce distributed bytes. Code review assesses behavior: configuration, privileged startup, child processes, input validation, display writes, filesystem access, and signer transition. Also inspect the emulator/game inputs and trusted base. See [SECURITY.md](../SECURITY.md).
