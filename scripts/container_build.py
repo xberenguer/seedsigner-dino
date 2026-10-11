@@ -195,44 +195,19 @@ def build_all(native_only=False):
     probe.write_text('#include <dlfcn.h>\nint main(int n,char **v){void*h=dlopen(v[1],RTLD_NOW);if(!h)return 1;unsigned(*api)(void)=dlsym(h,"retro_api_version");if(!api||api()!=1)return 2;dlclose(h);return n!=2;}\n')
     run([cc, "-march=armv6", "-mfpu=vfp", "-mfloat-abi=hard", "-o", str(WORK / "core-probe"), str(probe), "-ldl"])
     run([*qemu, str(WORK / "core-probe"), str(core)])
-    if not native_only:
-        rom = verify_rom(ROOT / "local-rom.gba")
-        for profile in results:
-            results[profile]["local_rom_600_frames"] = json.loads(run([*qemu, str(ARTIFACTS / profile / "dino-native"),
-                "--headless", "--core", str(core), "--rom", str(rom), "--frames", "600"], capture=True).splitlines()[-1])
-            stage = WORK / ("payload-" + profile)
-            shutil.copytree(ROOT / "payload", stage, ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"))
-            native = stage / "opt/dino/native"
-            native.mkdir(exist_ok=True)
-            # Reject inherited, unaccounted-for native inputs rather than silently trust them.
-            if list(native.iterdir()):
-                raise ValueError("Source payload must not contain prebuilt native inputs")
-            shutil.copy2(ARTIFACTS / profile / "dino-native", native / "dino-native")
-            shutil.copy2(core, native / core.name)
-            shutil.copy2(rom, native / lock["local_rom"]["file"])
-            (stage / "opt/dino/display-profile.json").write_text(json.dumps({"profile": profile}, sort_keys=True) + "\n")
-            sources = stage / "opt/dino/licenses/sources"
-            sources.mkdir(parents=True, exist_ok=True)
-            for key in ("gpsp", "libtonc"):
-                shutil.copy2(inputs[key], sources / inputs[key].name)
-            shutil.copy2(ROOT / "project-source.tar.gz", sources / "seedsigner-dino-source.tar.gz")
-            source_list = {p.relative_to(ROOT).as_posix(): sha(p) for p in [*sorted((ROOT / "native").glob("*")), *sorted((ROOT / "scripts").glob("*")), *sorted((ROOT / "build").glob("*"))]
-                           if p.is_file() and p.name != "dino-native" and p.suffix not in (".pyc", ".o", ".so")}
-            (stage / "opt/dino/native-build.json").write_text(json.dumps({"schema": 1, "profile": profile,
-                "inputs": lock, "source_files_sha256": source_list, "open_bios": bios,
-                "native_sha256": sha(native / "dino-native"), "core_sha256": sha(core),
-                "ROM": "Explicit local input; redistribution rights pending; no public image release"}, indent=2) + "\n")
-            filename = "seedsigner-v0.8.7-dino-v0.1.0-beta-" + profile + "-pi0.img"
-            assemble_image(inputs["seedsigner_os"], stage, ARTIFACTS / filename, profile=profile)
     manifest = {"schema": 1, "version": lock["project_version"], "inputs": lock,
         "signed_base": signed, "project_source_archive_sha256": sha(ROOT / "project-source.tar.gz"),
         "toolchain_version": run([cc, "--version"], capture=True).splitlines()[0],
         "debian_packages": run(["dpkg-query", "-W", "-f=${Package}=${Version}\n"], capture=True).splitlines(),
         "open_bios": bios, "ELF_attributes": abi, "stock_runtime": stock, "QEMU_checks": results,
         "physical_device_tested": False, "public_image_release_approved": False,
-        "reproducibility_boundary": "Own frontend, gpSP and open BIOS compiled from pinned source. Bootlin compiler/sysroot, Debian tools and signed SeedSigner OS are trusted binary inputs. ROM is local only. Repeated builds must be compared; QEMU is not hardware validation or a security guarantee.",
+        "reproducibility_boundary": "Own frontend, gpSP and open BIOS compiled from pinned source. Bootlin compiler/sysroot, Debian tools and signed SeedSigner OS are trusted binary inputs. ROM1.1 is a trusted upstream release binary, not rebuilt from source. Repeated builds must be compared; QEMU is not hardware validation or a security guarantee.",
         "files": {p.relative_to(ARTIFACTS).as_posix(): sha(p) for p in sorted(ARTIFACTS.rglob("*")) if p.is_file()}}
     (ARTIFACTS / "build-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    if not native_only:
+        from package_release import package_images
+        package_images(ARTIFACTS, ARTIFACTS, ROOT / "local-rom.gba",
+                       ROOT / "project-source.tar.gz", reuse=False)
     (ARTIFACTS / "SHA256SUMS").write_text("".join(sha(p) + "  " + p.relative_to(ARTIFACTS).as_posix() + "\n"
                                                for p in sorted(ARTIFACTS.rglob("*")) if p.is_file() and p.name != "SHA256SUMS"))
 

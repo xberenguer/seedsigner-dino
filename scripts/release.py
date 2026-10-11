@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Pinned input fetches, isolated local builds, and source-only release archives.
+"""Pinned inputs, isolated builds, image packaging and source archives.
 
-No GitHub write or physical-device operation is performed. ROM input is local
-only; a checksum verifies identity, not a redistribution license or security.
+No GitHub write or physical-device operation is performed. The official ROM1.1
+is a declared trusted upstream binary; its source-to-binary build is not verified.
 """
 import argparse
 import gzip
@@ -16,12 +16,13 @@ import subprocess
 import tarfile
 import tempfile
 import urllib.request
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "build/inputs.lock.json"
 EPOCH = 1672531200
-IMAGE_TAG = "seedsigner-dino-builder:0.1.0-beta"
-SOURCE_NAME = "seedsigner-dino-v0.1.0-beta-source.tar.gz"
+IMAGE_TAG = "seedsigner-dino-builder:0.1.1-beta"
+SOURCE_NAME = "seedsigner-dino-v0.1.1-beta-source.tar.gz"
 
 
 def sha(path):
@@ -60,12 +61,35 @@ def fetch(offline=False):
 
 def verify_rom(path):
     if path is None:
-        raise ValueError("Images need an explicit local --rom. Source/native builds need no ROM. Historical ROM redistribution is pending; it is never downloaded or included in the source release.")
-    item = load_lock()["local_rom"]
+        raise ValueError("ROM path required for verification; use prepare_rom for the locked official release")
+    item = load_lock()["licensed_rom"]
     path = checked(path, item["sha256"])
     if path.stat().st_size != item["bytes"]:
-        raise ValueError("Local ROM size does not match the known prototype input")
+        raise ValueError("ROM size does not match the licensed official1.1 input")
     return path
+
+
+def prepare_rom(path=None):
+    if path is not None:
+        return verify_rom(path)
+    lock = load_lock()
+    item = lock["licensed_rom"]
+    release_input = lock["inputs"][item["archive_input"]]
+    archive = checked(ROOT / "downloads" / release_input["file"], release_input["sha256"])
+    target = ROOT / "downloads" / item["file"]
+    if target.exists() or target.is_symlink():
+        return verify_rom(target)
+    # Exact member only: upstream ZIP also contains macOS resource-fork .gba files.
+    with zipfile.ZipFile(archive) as stream:
+        matches = [entry for entry in stream.infolist() if entry.filename == item["archive_member"]]
+        if len(matches) != 1 or matches[0].file_size != item["bytes"]:
+            raise ValueError("Official release ROM member is missing, duplicated or wrong size")
+        data = stream.read(matches[0])
+    if hashlib.sha256(data).hexdigest() != item["sha256"]:
+        raise ValueError("Official release ROM member does not match its lock")
+    with target.open("xb") as outgoing:
+        outgoing.write(data)
+    return verify_rom(target)
 
 
 def source_files():
@@ -76,7 +100,7 @@ def source_files():
         folder = ROOT / directory
         if folder.is_dir():
             files.extend(p for p in folder.rglob("*") if p.is_file() or p.is_symlink())
-    files.extend(ROOT / "build" / name for name in ("Dockerfile", "inputs.lock.json", "bios.ld"))
+    files.extend(ROOT / "build" / name for name in ("Dockerfile", "inputs.lock.json", "native-cache.lock.json", "bios.ld"))
     approved = []
     for path in sorted(set(files)):
         relative = path.relative_to(ROOT)
@@ -110,7 +134,7 @@ def source(output):
     compressed = bytearray(gzip.compress(buffer.getvalue(), compresslevel=9, mtime=0))
     compressed[9] = 255  # Normalize gzip OS byte across Python 3.11-3.14.
     archive_path.write_bytes(compressed)
-    manifest = {"schema": 1, "version": "0.1.0-beta", "kind": "source-only-preview",
+    manifest = {"schema": 1, "version": load_lock()["project_version"], "kind": "project-source",
                 "archive": archive_path.name, "sha256": sha(archive_path), "files": hashes,
                 "ROM_included": False, "OS_image_included": False, "compiled_binaries_included": False}
     (output / (SOURCE_NAME + ".manifest.json")).write_text(json.dumps(manifest, indent=2) + "\n")
@@ -123,7 +147,7 @@ def run_container(context, rom, native_only, rebuild_builder=False, output=None)
     # Inputs are verified on both sides of this boundary. Docker cp deliberately
     # avoids depending on host/VM shared-directory configuration on macOS.
     fetch(offline=True)
-    rom = None if native_only else verify_rom(rom)
+    rom = None if native_only else prepare_rom(rom)
     docker = ["docker"] + (["--context", context] if context else [])
     target = Path(output) if output else ROOT / "dist/local-build"
     if target.exists():
@@ -164,6 +188,10 @@ def main():
     sub.add_parser("verify", help="Verify locked downloads and the OS signature (requires local gpg)")
     package = sub.add_parser("source")
     package.add_argument("--output", type=Path, default=ROOT / "dist/source-preview")
+    cached = sub.add_parser("package", help="Assemble images using the pinned, verified native build cache (local gpg and mcopy required)")
+    cached.add_argument("--native-dir", type=Path, required=True)
+    cached.add_argument("--rom", type=Path)
+    cached.add_argument("--output", type=Path, required=True)
     for name in ("native", "build"):
         build = sub.add_parser(name)
         build.add_argument("--docker-context")
@@ -179,10 +207,13 @@ def main():
         print(json.dumps(verify_signature(), indent=2))
     elif args.command == "source":
         source(args.output)
+    elif args.command == "package":
+        from package_release import package_images
+        package_images(args.native_dir, args.output, args.rom)
     else:
         # Validate local ROM before any Docker mutation.
         if args.command == "build":
-            verify_rom(args.rom)
+            prepare_rom(args.rom)
         run_container(args.docker_context, args.rom, args.command == "native", args.rebuild_builder, args.output)
 
 
