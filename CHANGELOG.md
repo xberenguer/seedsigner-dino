@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1-beta — experimental flashable images — 2026-10-11
+
+- Provide separate regular and Plus Pi Zero IMG downloads with SHA-256 checksums and image inspection manifests.
+- Replace the historical 1.0.1 ROM with the author's licensed Dino 1.1 release, retaining its MIT and BSD notices and pinned source.
+- Package the verified ARM frontends, rebuilt gpSP core and open BIOS with the signed SeedSigner 0.8.7 base.
+- Preserve the original splash, independent game clock, editable entry combination, and bounded SD mount wait.
+- Include source and build provenance for review. Physical qualification and an independent security audit remain pending.
+
 ## 0.1.0-beta — source preview — 2026-10-11
 
 - Publish the native libretro frontend, Python hardware bridge, fallback game, and SeedSigner startup integration for review.

@@ -1,6 +1,6 @@
 # Security
 
-SeedSigner Dino modifies the startup path of a signing device. This source preview is experimental and has not had an independent security audit or complete physical qualification. Test with disposable seeds and test transactions; do not use a wallet holding funds for validation.
+SeedSigner Dino modifies the startup path of a signing device. This release is experimental and has not had an independent security audit or complete physical qualification. Test with disposable seeds and test transactions; do not use a wallet holding funds for validation.
 
 ## Intended boundary
 
