@@ -3,7 +3,9 @@
 import configparser
 import json
 import math
+import os
 from pathlib import Path
+import time
 from typing import NamedTuple
 
 
@@ -14,6 +16,8 @@ ENTRY_CONFIG_PATH = Path("/mnt/microsd/dino-config.ini")
 DISPLAY_PROFILE_PATH = Path("/opt/dino/display-profile.json")
 MAX_CONFIG_BYTES = 4096
 RELEASE_SECONDS = 0.08
+MOUNT_TIMEOUT_SECONDS = 10.0
+SD_NOT_READY_WARNING = "SD card not ready; using default entry gesture"
 
 
 class EntryConfig(NamedTuple):
@@ -76,11 +80,34 @@ def parse_entry_config(text):
     return EntryConfig(tuple(name for name in BUTTON_NAMES if name in names), hold)
 
 
-def load_entry_config(path=ENTRY_CONFIG_PATH):
+def wait_for_sd_mount(mount_point=ENTRY_CONFIG_PATH.parent, *, timeout=MOUNT_TIMEOUT_SECONDS,
+                      is_mount=os.path.ismount, clock=time.monotonic, sleep=time.sleep):
+    """Wait for the stock asynchronous mdev mount, without mounting or writing."""
+    deadline = clock() + timeout
+    while True:
+        try:
+            if is_mount(mount_point):
+                return True
+        except OSError:
+            pass
+        remaining = deadline - clock()
+        if remaining <= 0:
+            return False
+        sleep(min(0.05, remaining))
+
+
+def load_entry_config(path=ENTRY_CONFIG_PATH, *, wait_for_mount=False, mount_waiter=None):
     """Return (configuration, warning); never write to the SD card."""
+    path = Path(path)
+    if wait_for_mount:
+        mount_waiter = wait_for_sd_mount if mount_waiter is None else mount_waiter
+        if not mount_waiter(path.parent):
+            return DEFAULT_ENTRY, SD_NOT_READY_WARNING
     try:
         return parse_entry_config(_read_text(path)), None
     except FileNotFoundError:
+        if wait_for_mount and not os.path.ismount(path.parent):
+            return DEFAULT_ENTRY, SD_NOT_READY_WARNING
         return DEFAULT_ENTRY, None
     except (OSError, UnicodeError, ValueError, configparser.Error):
         return DEFAULT_ENTRY, "Invalid dino-config.ini; using defaults"

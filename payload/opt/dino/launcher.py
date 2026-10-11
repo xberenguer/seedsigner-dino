@@ -11,7 +11,7 @@ from pathlib import Path
 from threading import Lock
 from types import SimpleNamespace
 
-from dino_config import (DEFAULT_ENTRY, PLUS_PROFILE, RELEASE_SECONDS,
+from dino_config import (DEFAULT_ENTRY, PLUS_PROFILE, RELEASE_SECONDS, SD_NOT_READY_WARNING,
                          load_display_profile, load_entry_config, resolve_profile)
 from display_hardware import RegularDisplayAdapter
 
@@ -43,16 +43,23 @@ def run_native_gate(hardware_factory=None, bridge_runner=None,
         fallback_factory = lambda hardware: DinoGate(
             hardware.renderer, hardware.buttons, hardware.pins,
             entry_config=entry_config)
-    command = [str(NATIVE_ROOT / "dino-native"),
-               "--bridge",
-               "--core", str(NATIVE_ROOT / "gpsp_libretro.so"),
-               "--rom", str(NATIVE_ROOT / "Google-Dino-Advance.gba"),
-               "--display-width", str(profile.width)] + entry_config.native_arguments()
     with hardware_factory() as hardware:
+        if entry_config is None:
+            # S02seedsigner starts before S10mdev, which mounts the SD asynchronously.
+            # Show progress while waiting; never silently lose a custom entry gesture.
+            hardware.show_message("Reading Dino config...")
+            entry_config, config_warning = load_entry_config(wait_for_mount=True)
         if config_warning:
-            hardware.show_message("Invalid Dino config", "Using default entry gesture")
+            title = ("SD card not ready" if config_warning == SD_NOT_READY_WARNING
+                     else "Invalid Dino config")
+            hardware.show_message(title, "Using default entry gesture")
             sleep(1.5)
         hardware.show_message("Starting Dino...")
+        command = [str(NATIVE_ROOT / "dino-native"),
+                   "--bridge",
+                   "--core", str(NATIVE_ROOT / "gpsp_libretro.so"),
+                   "--rom", str(NATIVE_ROOT / "Google-Dino-Advance.gba"),
+                   "--display-width", str(profile.width)] + entry_config.native_arguments()
         try:
             result = bridge_runner(command, hardware.display, hardware.read_mask)
         except Exception:
@@ -417,8 +424,7 @@ def install_controller_hooks(controller_class, renderer_class, buttons_class,
 
 def main(argv=None):
     profile = load_display_profile()
-    entry_config, warning = load_entry_config()
-    run_native_gate(profile=profile, entry_config=entry_config, config_warning=warning)
+    run_native_gate(profile=profile, entry_config=None)
     upstream_path = str(Path("/opt/src"))
     if upstream_path not in sys.path:
         sys.path.insert(0, upstream_path)
