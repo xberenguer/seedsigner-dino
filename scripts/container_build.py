@@ -170,13 +170,15 @@ def build_all(native_only=False):
     flags = "-fno-ident -ffile-prefix-map=/work=. -fdebug-prefix-map=/work=."
     environment = {**os.environ, "CFLAGS": flags}
     run(["make", "-j2", "platform=rpi1", "CC=" + cc, "AR=" + prefix + "ar", "GIT_VERSION= e554360",
-         "LDFLAGS=-Wl,--build-id=none"], cwd=gpsp, env=environment)
+         "LDFLAGS=-Wl,--build-id=none -Wl,-z,noexecstack"], cwd=gpsp, env=environment)
     core = ARTIFACTS / "gpsp_libretro.so"
     shutil.copy2(gpsp / core.name, core)
     abi = {"gpsp": elf_check(core, readelf)}
     runtime = WORK / "stock-runtime"
     stock = stock_libraries(inputs["seedsigner_os"], runtime)
-    qemu = ["qemu-arm", "-cpu", "arm1176", "-L", str(runtime)]
+    # Keep guest addresses below 4 GiB, at a separate host base. The explicit
+    # base also permits ARM QEMU inside amd64 emulation on an ARM Docker host.
+    qemu = ["qemu-arm", "-R", "0xfffff000", "-B", "0x100000000", "-cpu", "arm1176", "-L", str(runtime)]
     results = {}
     for profile, width in (("regular", 240), ("plus", 320)):
         output = ARTIFACTS / profile
