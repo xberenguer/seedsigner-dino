@@ -1,0 +1,21 @@
+Native Dino runner
+
+The Python game adapts the original Chromium Dino game, using its original 1x
+sprite sheet and game constants, collision geometry, and movement rules.
+The bundled artwork is unmodified. No endorsement by Google is implied.
+
+Original source notices:
+  offline.ts: Copyright 2014 The Chromium Authors
+  offline_sprite_definitions.ts: Copyright 2021 The Chromium Authors
+  constants.ts, trex.ts, obstacle.ts, horizon_line.ts, distance_meter.ts,
+  night_mode.ts, game_over_panel.ts: Copyright 2024 The Chromium Authors
+  Chromium LICENSE: Copyright 2015 The Chromium Authors
+
+These materials and this adaptation are distributed under the BSD-style terms
+in CHROMIUM-BSD-3-Clause.txt. See ../source-manifest.json for the pinned source
+commit, original file paths, URLs, and SHA256 hashes.
+
+Adaptation changes: native Python/Pillow rendering, GPIO-independent held-button
+inputs, fixed 60Hz simulation, a 320x150 viewport, a scaled maximum speed,
+volatile RAM-only score, and no browser/DOM, networking, audio, or persistent
+high-score storage. The host application owns device controls and mode changes.
