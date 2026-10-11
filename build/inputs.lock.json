@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source_date_epoch": 1672531200,
-  "project_version": "0.1.0-beta",
+  "project_version": "0.1.1-beta",
   "seedsigner_version": "0.8.7",
   "signer_primary_fingerprint": "46739B74B56AD88F14B0882EC7EF709007260119",
   "inputs": {
@@ -46,17 +46,58 @@
       "url": "https://keybase.io/seedsigner/pgp_keys.asc",
       "role": "Public signing key; fingerprint checked independently of downloaded key.",
       "sha256": "cb7d694d3c7f3c655d9d2e7a30a45b60fd6d8fb30e37afc53440eb156df9e57a"
+    },
+    "dino_rom_release": {
+      "file": "Google-Dino-Advance.1.1.zip",
+      "url": "https://github.com/fritzem/Google-Dino-GBA/releases/download/1.1/Google-Dino-Advance.1.1.zip",
+      "sha256": "e3a6571294fac02a8585ca53367c8b0b85352277286fc6d61cdc4cd8ede3ca5e",
+      "role": "Trusted official upstream ROM1.1 release binary; source-to-ROM reproduction is not claimed."
+    },
+    "dino_rom_source": {
+      "file": "Google-Dino-GBA-dca6780-source.tar.gz",
+      "url": "https://codeload.github.com/fritzem/Google-Dino-GBA/tar.gz/dca6780d60aa7816da89b797c5a64a77f9bfd334",
+      "sha256": "ab54c1f6f241d561ef8ead32f3097b4f889ae4306c3340d1bf21ab789a81e4fa",
+      "commit": "dca6780d60aa7816da89b797c5a64a77f9bfd334",
+      "role": "Matching tag1.1 source and MIT/BSD notices; gba-toolchain submodule is a source-build dependency, not used for this trusted binary."
+    },
+    "compiled_project_source": {
+      "file": "seedsigner-dino-v0.1.0-beta-source.tar.gz",
+      "url": "https://github.com/xberenguer/seedsigner-dino/releases/download/v0.1.0-beta/seedsigner-dino-v0.1.0-beta-source.tar.gz",
+      "sha256": "30abb424f4ec741d776eb1bf9cf75d862de726582dcc2a0b362dda1535d65e3d",
+      "role": "Exact source snapshot used by the verified cached native build. Package-only mode requires native/runtime byte equality with this snapshot."
+    },
+    "gba_toolchain_source": {
+      "file": "gba-toolchain-be72565-source.tar.gz",
+      "url": "https://codeload.github.com/felixjones/gba-toolchain/tar.gz/be72565d4bd6302cf85555d45d22a02325c63281",
+      "sha256": "05d8429c3bd9f6111caa9775839c0face737ef71dddb7a2dbe7fa1e5667e604a",
+      "commit": "be72565d4bd6302cf85555d45d22a02325c63281",
+      "role": "Exact ROM source submodule, including librom zlib notice. Not built in trusted official ROM binary path."
+    },
+    "maxmod_license_reference": {
+      "file": "maxmod-d8de6ab-source.tar.gz",
+      "url": "https://codeload.github.com/devkitPro/maxmod/tar.gz/d8de6ab499577d842561f1b8372fdf852985db77",
+      "sha256": "c39fd852f9165bd7394410e27790d9a6fb828345cc5049895cd0ddd3b46dfe94",
+      "commit": "d8de6ab499577d842561f1b8372fdf852985db77",
+      "role": "ISC notice reference only: exact maxmod version linked into official ROM1.1 is not documented. This archive is not claimed as exact ROM corresponding source."
     }
-  },
-  "local_rom": {
-    "file": "Google-Dino-Advance.gba",
-    "sha256": "5942beac698ecee57c4d93da042b37ce632121f3500804cf3679d5edd642663d",
-    "bytes": 109072,
-    "role": "Optional user-supplied local input only. Not fetched, included in source archive, or approved for public redistribution. Historical1.0.1license scope unresolved."
   },
   "build_environment": {
     "platform": "linux/amd64",
     "debian_base": "debian:bookworm-slim@sha256:a4672c0cb26fbdde88e38fa2dfb6c681942306680e41e4378b28770b6e79ee91",
     "debian_snapshot": "20260901T000000Z"
+  },
+  "licensed_rom": {
+    "file": "Google-Dino-Advance.gba",
+    "archive_input": "dino_rom_release",
+    "archive_member": "Google-Dino-Advance 1.1/Google-Dino-Advance.gba",
+    "sha256": "d08239bea3044af0b0224cb5436221fec59e1ea3ba811ed0ec17212683a2cb81",
+    "bytes": 109084,
+    "source_input": "dino_rom_source",
+    "license_files": {
+      "LICENSE": "83dcdfdb83176ca7e2013d36c559783aad10798ce6f7f9ecd8257c4edaa6fae2",
+      "licenses/chrome.txt": "29f9cb338cf938718a1e534cb84d436eb5f82f165f6ea8f7b9f074de25d80cc8",
+      "licenses/chromium_os.txt": "6fd748674bdaffce1e4cd809ef38c6ef9a6bbd39458f530f0ccbca9c3d733aa8"
+    },
+    "role": "Official ROM1.1 identified by exact archive/member/hash. Distributed with MIT and BSD3 notices. Historical prototype ROM is never accepted."
   }
 }

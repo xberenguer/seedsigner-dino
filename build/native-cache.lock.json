@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "project_source_input": "compiled_project_source",
+  "manifest_sha256": "0bc33bf3c435968bb868328d474cceead43cd0c830474190f17bae767987b6d9",
+  "files": {
+    "gpsp_libretro.so": "0449c505c4cc368b45694d1fd7a734271ddcc88fd23ed4a0c3bd10aaa3a300a4",
+    "open_gba_bios.bin": "abdfccc8de50b379aa2f2fa30115cff5ae81ad0e24c1cc90fa6137b39bce024a",
+    "regular/dino-native": "bcb4c3fb2847f579dd446c858a2af8462403b807af2bcc53c7782ba11c4e1bc1",
+    "plus/dino-native": "3703e04ca0958d2818fdd35ec86147cba04a01fec6cd57188fa40bea5eb5e489"
+  }
+}
