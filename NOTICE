@@ -1,34 +1,51 @@
 SeedSigner Dino — third-party attribution summary
 
-Original project code is distributed under GPL-2.0-or-later. See LICENSE.
-This designation does not relicense third-party code, assets, the upstream
-SeedSigner operating-system image, or omitted binary inputs.
+Original project code is GPL-2.0-or-later; see LICENSE. This does not relicense
+third-party components, assets, or the entire SeedSigner operating-system image.
 
 SeedConsole / DesobedienteTecnologico and contributors:
 https://github.com/DesobedienteTecnologico/seedconsole
-The original development game ROM and gpSP core were extracted unchanged from
-SeedConsole 4.8.1. They are not included in this source preview.
+Inspiration and initial working game/emulator setup. Early development used
+binaries from SeedConsole 4.8.1. Public 0.1.1-beta images use a source-built
+emulator and the official Google-Dino-GBA 1.1 release instead.
 
 Google-Dino-GBA / Ethan Fritz:
-https://github.com/fritzem/Google-Dino-GBA
-Historical release 1.0.1 redistribution is unresolved. Later source has an MIT
-license; the preview does not assume this settles every historical file/asset.
+https://github.com/fritzem/Google-Dino-GBA/tree/1.1
+MIT, Copyright (c) 2021 Ethan Fritz. The official 1.1 ROM is a trusted binary
+input. MIT and Chromium / ChromiumOS BSD notices accompany the distribution.
+Historical 1.0.1 is not distributed. Upstream build dependencies include the
+zlib-licensed gba-toolchain ROM runtime, MIT tonclib, and ISC Maxmod.
 
-gpSP / Exophase, libretro, and contributors: GPL-2.0-or-later.
+Maxmod / Mukunda Johnson:
+Copyright (c) 2008, Mukunda Johnson (mukunda@maxmod.org)
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+GpSP / Exophase, libretro, and contributors: GPL-2.0-or-later.
 https://github.com/libretro/gpsp
-The embedded open BIOS includes credits to Normmatt and the VBA / VBA-M teams.
-The libretro API header retains its embedded MIT notice.
-The open BIOS build also uses MIT-licensed libtonc headers from devkitPro.
+The open BIOS credits Normmatt and the VBA / VBA-M teams. The libretro API
+header retains its MIT notice. Open BIOS builds use MIT libtonc headers.
 
 SeedSigner and contributors: MIT.
 https://github.com/SeedSigner/seedsigner/tree/0.8.7
-Display material credits Russ Hughes and Ivan Belokobylskiy under MIT terms.
-Full retained display notices: native/NOTICE.txt.
+ST7789 material credits Russ Hughes and Ivan Belokobylskiy under MIT terms.
+Full display notices: native/NOTICE.txt.
 
 The Chromium Authors: BSD-3-Clause for fallback game material.
 Full license: payload/opt/dino/licenses/CHROMIUM-BSD-3-Clause.txt.
 Provenance: payload/opt/dino/source-manifest.json.
 
-See CREDITS.md and docs/licensing.md for component and release limitations.
-Any future binary release must include its complete applicable notices and
-corresponding-source/build information, beyond this summary.
+The SeedSigner OS is a collection of separately licensed components, including
+GPL/LGPL software and Raspberry Pi firmware. Its separate corresponding-source
+asset retains sources, patches, configuration, package manifests, notices,
+and collection warnings. The root license does not replace those terms.
+
+See CREDITS.md, docs/licensing.md, and docs/corresponding-source.md.
