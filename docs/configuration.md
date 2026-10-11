@@ -31,4 +31,4 @@ If the card is unavailable after that wait, the screen shows `SD card not ready`
 
 The display profile is selected when the image is built. It cannot be changed through this file. Use the regular image for a 240 × 240 screen and the Plus image for a 320 × 240 screen.
 
-This source preview does not provide a flashable image. These instructions describe configuration in images produced by the documented local build.
+These settings apply to the published experimental images and images produced by the documented local build. Check the [release status](release-status.md) for validation limits.

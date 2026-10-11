@@ -1,6 +1,6 @@
 # Troubleshooting and restoration
 
-This is a source preview. These steps apply to locally built development images; no official project IMG is offered yet.
+These steps apply to the experimental regular and Plus images in [release 0.1.1-beta](https://github.com/xberenguer/seedsigner-dino/releases/tag/v0.1.1-beta), and to local builds from the same source.
 
 ## Black, skewed, or cropped display
 

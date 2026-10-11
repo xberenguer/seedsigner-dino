@@ -27,7 +27,7 @@ These are physical BOARD pin numbers, not BCM GPIO numbers. Display integration 
 ## Qualification status
 
 - The earlier Plus development path was exercised during development, but the final splash-restored revision has no complete recorded physical qualification.
-- Regular-profile and editable-configuration support are new in this source preview and require physical testing.
+- Both images are published as experimental beta builds. Regular-profile and editable-configuration support still require physical testing.
 - Software tests and emulated timing checks cannot establish LCD appearance, camera operation, or signing reliability.
 
 Record the exact board, HAT, display, image hash, and results using the [hardware checklist](hardware-testing.md) before recommending an image for use.

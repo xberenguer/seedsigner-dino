@@ -1,34 +1,32 @@
 # Release status
 
-## 0.1.0-beta source preview — 2026-10-11
+## 0.1.1-beta experimental images — 2026-10-11
 
-The repository publishes source and build tooling for review. It does not provide a ready-to-use IMG. Intended future image names include both the upstream and modification versions:
+The release provides flashable Pi Zero images for the regular and Plus displays:
 
 ```text
-seedsigner-v0.8.7-dino-v0.1.0-beta-regular-pi0.img
-seedsigner-v0.8.7-dino-v0.1.0-beta-plus-pi0.img
+seedsigner-v0.8.7-dino-v0.1.1-beta-regular-pi0.img
+seedsigner-v0.8.7-dino-v0.1.1-beta-plus-pi0.img
 ```
+
+Download them from the [0.1.1-beta release](https://github.com/xberenguer/seedsigner-dino/releases/tag/v0.1.1-beta). Match the image to your display and verify its SHA-256 checksum before writing it to a test microSD card.
 
 | Area | Status |
 | --- | --- |
-| Upstream target | Official SeedSigner 0.8.7 Pi Zero image, pinned by hash |
-| Startup / splash | Explicit hold-and-release transition; original splash retained |
-| Regular / Plus profiles | Implemented for software review; physical qualification pending |
-| Boot configuration | Implemented for software review; physical qualification pending |
-| Historical development validation | Earlier Plus revision recorded 50 passing software tests and a byte-identical assembly; this does not qualify the new source preview |
-| Native executable builds | Recipe provided; final build evidence belongs to the exact reviewed commit |
-| Complete independent image rebuild | Pending |
-| Historical ROM redistribution | Unresolved; ROM not included |
-| Hardware release checklist | Pending for both profiles |
+| Upstream target | Official SeedSigner 0.8.7 Pi Zero image, checked against its pinned hash and signature |
+| Startup / splash | Explicit hold-and-release transition; original SeedSigner splash retained |
+| Regular / Plus profiles | Implemented; physical qualification pending for these exact images |
+| Boot configuration | Editable `dino-config.ini`; mount wait and defaults covered by software tests |
+| Native executables | ARMv6 frontends, gpSP and open BIOS built from pinned sources; build evidence accompanies the release |
+| Game | Official Google Dino Advance 1.1 binary; MIT and BSD notices and corresponding tagged source included |
+| Image assembly | Deterministic overlay assembly and image readback checks; see the attached manifests and validation evidence |
+| Full OS rebuild | Not performed; the official signed OS image is a trusted binary input |
+| Independent clean rebuild | Pending |
+| Hardware checklist | Pending for both profiles |
 | Independent security audit | Not performed |
 
-## Before a binary release
+This is an experimental beta for review and disposable test seeds. Passing software checks does not establish that the device boots, displays correctly, runs at full speed, or signs transactions safely on physical hardware. Complete the [hardware checklist](hardware-testing.md) before relying on either profile.
 
-1. Resolve the game ROM's licensing and third-party asset coverage, or use a demonstrably redistributable replacement built from pinned source.
-2. Retain complete corresponding source, notices, and build information for distributed components, including the relevant OS/firmware obligations.
-3. Run the software and image-inspection checks for the final commit.
-4. Obtain an independent clean rebuild and compare output hashes.
-5. Complete the physical checklist for each screen profile.
-6. Publish source, manifests, checksums, build logs, and hardware test results with clearly scoped claims.
+Source archives, license notices, input pins, checksums, and build/inspection evidence are published alongside the images. See [licensing](licensing.md) and [reproducibility](reproducibility.md) for what is supplied and which binary inputs are trusted.
 
-Source-only publication does not imply that these binary release gates have been met.
+The earlier [0.1.0-beta release](https://github.com/xberenguer/seedsigner-dino/releases/tag/v0.1.0-beta) remains a source-only preview. Its lack of IMG assets is intentional; use 0.1.1-beta for flashing.
