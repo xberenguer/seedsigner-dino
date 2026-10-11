@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "source_date_epoch": 1672531200,
+  "project_version": "0.1.0-beta",
+  "seedsigner_version": "0.8.7",
+  "signer_primary_fingerprint": "46739B74B56AD88F14B0882EC7EF709007260119",
+  "inputs": {
+    "toolchain": {
+      "file": "armv6-eabihf--glibc--stable-2024.05-1.tar.xz",
+      "url": "https://toolchains.bootlin.com/downloads/releases/toolchains/armv6-eabihf/tarballs/armv6-eabihf--glibc--stable-2024.05-1.tar.xz",
+      "sha256": "2924afaa0d47e046339fe70bf526db5a19edaa58d87c6758a861ef41e2781368",
+      "role": "Trusted prebuilt Bootlin ARMv6 VFP hard-float GCC toolchain; toolchain itself is not rebuilt by this project."
+    },
+    "gpsp": {
+      "file": "gpsp-e554360-source.tar.gz",
+      "url": "https://codeload.github.com/libretro/gpsp/tar.gz/e554360dd3ed283696fc607877024a219248b735",
+      "sha256": "d989408ccc6e6fc20caa3af8727bcd4cdeb3ed68b6e5f2a6b4312576cf7fc700",
+      "commit": "e554360dd3ed283696fc607877024a219248b735",
+      "role": "Core and open BIOS corresponding source; built locally."
+    },
+    "libtonc": {
+      "file": "libtonc-ccc03fa-source.tar.gz",
+      "url": "https://codeload.github.com/devkitPro/libtonc/tar.gz/ccc03fa321e56f51aed5e2ee1d6e3df3d1cbc803",
+      "commit": "ccc03fa321e56f51aed5e2ee1d6e3df3d1cbc803",
+      "role": "Headers used to rebuild open BIOS; MIT notices retained.",
+      "sha256": "606288d42d2abb2e7a4cc0e151feb816aa960a88def4dda5a7b07f79e9b9f973"
+    },
+    "seedsigner_os": {
+      "file": "seedsigner_os.0.8.7.pi0.img",
+      "url": "https://github.com/SeedSigner/seedsigner/releases/download/0.8.7/seedsigner_os.0.8.7.pi0.img",
+      "sha256": "67f005c7ace26500a78be3f4d97eaf02d76d018550ec54df011741dde1933ce9",
+      "role": "Trusted upstream signed binary OS base; not rebuilt by this project."
+    },
+    "seedsigner_sums": {
+      "file": "seedsigner.0.8.7.sha256.txt",
+      "url": "https://github.com/SeedSigner/seedsigner/releases/download/0.8.7/seedsigner.0.8.7.sha256.txt",
+      "sha256": "c98b87a0bab8747744fdb087833c89f6665acdde180ee7b7ce074ca27cfde227"
+    },
+    "seedsigner_signature": {
+      "file": "seedsigner.0.8.7.sha256.txt.sig",
+      "url": "https://github.com/SeedSigner/seedsigner/releases/download/0.8.7/seedsigner.0.8.7.sha256.txt.sig",
+      "sha256": "7dcf53ebdb678ee873b990358dfbd7a0ad7b38ee3ba0d7e758061d3b8749049d"
+    },
+    "seedsigner_key": {
+      "file": "seedsigner-pgp.asc",
+      "url": "https://keybase.io/seedsigner/pgp_keys.asc",
+      "role": "Public signing key; fingerprint checked independently of downloaded key.",
+      "sha256": "cb7d694d3c7f3c655d9d2e7a30a45b60fd6d8fb30e37afc53440eb156df9e57a"
+    }
+  },
+  "local_rom": {
+    "file": "Google-Dino-Advance.gba",
+    "sha256": "5942beac698ecee57c4d93da042b37ce632121f3500804cf3679d5edd642663d",
+    "bytes": 109072,
+    "role": "Optional user-supplied local input only. Not fetched, included in source archive, or approved for public redistribution. Historical1.0.1license scope unresolved."
+  },
+  "build_environment": {
+    "platform": "linux/amd64",
+    "debian_base": "debian:bookworm-slim@sha256:a4672c0cb26fbdde88e38fa2dfb6c681942306680e41e4378b28770b6e79ee91",
+    "debian_snapshot": "20260901T000000Z"
+  }
+}
