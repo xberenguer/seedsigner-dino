@@ -25,7 +25,9 @@ hold_seconds = 3
 
 Hold every configured button continuously for the configured duration, then release **all eight buttons** for at least 80 ms. The release interval is fixed. The entry gesture is shared by the native and fallback games.
 
-Missing configuration uses the default. Invalid configuration produces a brief visible warning and uses the default. Do not treat a typo as a new access restriction: this is a navigation shortcut, not authentication.
+At startup the screen shows `Reading Dino config...` while the launcher waits up to 10 seconds for the SD card's boot partition to become available. It then reads the configuration once into RAM; removing the card afterward does not change the active gesture.
+
+If the card is unavailable after that wait, the screen shows `SD card not ready` and `Using default entry gesture`, then uses `KEY1+KEY3` with a two-second hold. Missing configuration on an available card uses the same default. Invalid configuration produces a brief visible warning and uses the default. Do not treat a typo as a new access restriction: this is a navigation shortcut, not authentication.
 
 The display profile is selected when the image is built. It cannot be changed through this file. Use the regular image for a 240 × 240 screen and the Plus image for a 320 × 240 screen.
 
