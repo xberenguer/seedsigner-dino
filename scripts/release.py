@@ -161,7 +161,7 @@ def run_container(context, rom, native_only, rebuild_builder=False, output=None)
                                                  IMAGE_TAG, "bash", "scripts/build_in_container.sh"] +
                                         (["--native-only"] if native_only else []), text=True).strip()
     try:
-        for name in ("native", "payload", "scripts", "build", "downloads"):
+        for name in ("native", "payload", "scripts", "build", "downloads", "docs"):
             subprocess.run(docker + ["cp", str(ROOT / name), container + ":/work/" + name], check=True)
         with tempfile.TemporaryDirectory(prefix="dino-corresponding-source-") as temporary:
             source(temporary)

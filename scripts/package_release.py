@@ -102,6 +102,9 @@ def additional_notices(destination):
 
 def package_images(native_dir, output, rom=None, source_archive=None, reuse=True):
     """reuse=False is only called after compilation in the isolated build container."""
+    os_notices = ROOT / 'docs/third-party-notices.txt'
+    if os_notices.is_symlink() or not os_notices.is_file() or os_notices.stat().st_size > 2 * 1024 * 1024:
+        raise ValueError('Reviewed OS/font notices must accompany every image')
     fetch(offline=True)
     signed = verify_signature()
     lock = load_lock()
@@ -160,6 +163,7 @@ def package_images(native_dir, output, rom=None, source_archive=None, reuse=True
             additional_notices(stage / 'opt/dino/licenses/third-party')
             shutil.copy2(ROOT / 'LICENSE', stage / 'opt/dino/licenses/SeedSigner-Dino-GPL-2.0.txt')
             shutil.copy2(ROOT / 'native/NOTICE.txt', stage / 'opt/dino/licenses/native-NOTICE.txt')
+            shutil.copy2(os_notices, stage / 'opt/dino/licenses/OS-and-font-notices.txt')
             # Current provenance is authoritative; retain exact historical native evidence as a separate record.
             (stage / 'opt/dino/native-build.json').write_text(json.dumps({**provenance, 'profile': profile}, indent=2) + '\n')
             shutil.copy2(native_dir / 'build-manifest.json', stage / 'opt/dino/native-compile-manifest.json')
